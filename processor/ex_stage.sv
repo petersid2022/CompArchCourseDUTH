@@ -100,6 +100,8 @@ module alu (
 
   logic [63:0] temp;
 
+  assign temp = opa * opb;
+
   //result
   always_comb begin
     case (func)
@@ -115,8 +117,8 @@ module alu (
       `ALU_SLT: result = {31'd0, ($signed(opa) < $signed(opb))};
       `ALU_SLTU: result = {31'd0, (opa < opb)};
       // actually implementing the functions
-      `ALU_MUL: result = {31'd0, ((opa * opb) >> 32)};
-      `ALU_MULHU: result = {31'd0, (opa * opb) & 32'hffffffff};
+      `ALU_MUL: result = temp[31:0];
+      `ALU_MULHU: result = temp[63:32];
       default: result = 32'hbaadbeef;
     endcase
   end

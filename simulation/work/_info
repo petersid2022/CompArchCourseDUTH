@@ -1,0 +1,275 @@
+m255
+K4
+z2
+!s11f vlog 2020.1 2020.02, Feb 28 2020
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 d/home/petrside/github/arch_ergasthrio_2/CompArchCourseDUTH/rtl/simulation
+valu
+Z1 DXx6 sv_std 3 std 0 22 VYECXdT12H8WgbUP_5Y6:3
+Z2 !s110 1714045874
+!i10b 1
+!s100 ]DHjKjZz8>@j^F7<`:Fo;3
+Z3 !s11b Dg1SIo80bB@j0V0VzS_@n1
+I?[M<oT4b8_zRgi1@J>_ZZ2
+Z4 VDg1SIo80bB@j0V0VzS_@n1
+S1
+R0
+Z5 w1713976147
+Z6 8../processor/ex_stage.sv
+Z7 F../processor/ex_stage.sv
+!i122 0
+L0 89 49
+Z8 OV;L;2020.1;71
+r1
+!s85 0
+31
+Z9 !s108 1714045874.000000
+!s107 processor_tb.sv|memory.sv|../processor/processor.sv|../processor/wb_stage.sv|../processor/mem_stage.sv|../processor/ex_stage.sv|../processor/id_stage.sv|../processor/regfile.sv|../processor/if_stage.sv|../sys_defs.vh|
+Z10 !s90 -reportprogress|300|-f|files_rtl.f|
+!i113 1
+Z11 tCvgOpt 0
+vex_stage
+R1
+R2
+!i10b 1
+!s100 J7bI]=RCC[VTjYX0b@@3H3
+R3
+I8DQ_ThL>JUe2RIdZZC1@R3
+R4
+S1
+R0
+R5
+R6
+R7
+!i122 0
+L0 5 74
+R8
+r1
+!s85 0
+31
+R9
+Z12 !s107 processor_tb.sv|memory.sv|../processor/processor.sv|../processor/wb_stage.sv|../processor/mem_stage.sv|../processor/ex_stage.sv|../processor/id_stage.sv|../processor/regfile.sv|../processor/if_stage.sv|../sys_defs.vh|
+R10
+!i113 1
+R11
+vid_stage
+R1
+R2
+!i10b 1
+!s100 nlgnm70VZU^C>CFgkaj8E2
+R3
+IP8DBXoLzM02L7LSz14X2M1
+R4
+S1
+R0
+Z13 w1714045864
+Z14 8../processor/id_stage.sv
+Z15 F../processor/id_stage.sv
+!i122 0
+L0 165 140
+R8
+r1
+!s85 0
+31
+R9
+R12
+R10
+!i113 1
+R11
+vif_stage
+R1
+R2
+!i10b 1
+!s100 IOQahiA6A`f5J1o:l:^MU1
+R3
+I5G7=61A3Bll`;7@8cK]0_0
+R4
+S1
+R0
+Z16 w1713950543
+8../processor/if_stage.sv
+F../processor/if_stage.sv
+!i122 0
+L0 5 54
+R8
+r1
+!s85 0
+31
+R9
+R12
+R10
+!i113 1
+R11
+vinst_decoder
+R1
+R2
+!i10b 1
+!s100 m8aBlIT3a3N=3>b]6[XI73
+R3
+INi3GAkXLn6W7n=l49Ng0Q2
+R4
+S1
+R0
+R13
+R14
+R15
+!i122 0
+L0 7 154
+R8
+r1
+!s85 0
+31
+R9
+R12
+R10
+!i113 1
+R11
+vmem
+R1
+R2
+!i10b 1
+!s100 gLRAW@2j;gP>f5ZOc8IME3
+R3
+I2I]31C;_7hgYzz4b<fXNa3
+R4
+S1
+R0
+R16
+8memory.sv
+Fmemory.sv
+!i122 0
+L0 5 83
+R8
+r1
+!s85 0
+31
+R9
+R12
+R10
+!i113 1
+R11
+vmem_stage
+R1
+R2
+!i10b 1
+!s100 ]H1h?>i^TiYOQT1`Bb0QX3
+R3
+IRG2mXZ8eCOIJEN;[ce7<[1
+R4
+S1
+R0
+R16
+8../processor/mem_stage.sv
+F../processor/mem_stage.sv
+!i122 0
+Z17 L0 5 27
+R8
+r1
+!s85 0
+31
+R9
+R12
+R10
+!i113 1
+R11
+vprocessor
+R1
+R2
+!i10b 1
+!s100 CSj4jLodmh8X9OP:bXDFd0
+R3
+I1=ebBT7UO>hXORzL_0_3o1
+R4
+S1
+R0
+w1714045844
+8../processor/processor.sv
+F../processor/processor.sv
+!i122 0
+L0 5 438
+R8
+r1
+!s85 0
+31
+R9
+R12
+R10
+!i113 1
+R11
+vprocessor_tb
+R1
+R2
+!i10b 1
+!s100 9fnkL14hB9OBii7zdjD6d3
+R3
+I4@V_bnOYaUmHId3T[9Vcj0
+R4
+S1
+R0
+R16
+8processor_tb.sv
+Fprocessor_tb.sv
+!i122 0
+L0 5 128
+R8
+r1
+!s85 0
+31
+R9
+R12
+R10
+!i113 1
+R11
+vregfile
+R1
+R2
+!i10b 1
+!s100 :YYG2klhGB`cznfQUEMlG3
+R3
+I@C`4Tg9J8ASRe3mfSJ2BX3
+R4
+S1
+R0
+R16
+8../processor/regfile.sv
+F../processor/regfile.sv
+!i122 0
+R17
+R8
+r1
+!s85 0
+31
+R9
+R12
+R10
+!i113 1
+R11
+vwb_stage
+R1
+R2
+!i10b 1
+!s100 CZFGA4SgTH6D6kKgAFZ;Z2
+R3
+IC8n8KQGV30UlFh^mLYdo^3
+R4
+S1
+R0
+R16
+8../processor/wb_stage.sv
+F../processor/wb_stage.sv
+!i122 0
+L0 5 12
+R8
+r1
+!s85 0
+31
+R9
+R12
+R10
+!i113 1
+R11

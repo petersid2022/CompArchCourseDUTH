@@ -1,0 +1,26 @@
+
+erg1.elf:     file format elf32-littleriscv
+
+
+Disassembly of section .text:
+
+00000000 <_start>:
+   0:	00008537          	lui	a0,0x8
+   4:	00050113          	mv	sp,a0
+   8:	008000ef          	jal	ra,10 <main>
+
+0000000c <hang>:
+   c:	0000006f          	j	c <hang>
+
+00000010 <main>:
+  10:	00500513          	li	a0,5
+  14:	00c0006f          	j	20 <times>
+	...
+
+00000020 <times>:
+  20:	00050513          	mv	a0,a0
+  24:	00200313          	li	t1,2
+  28:	00a50593          	addi	a1,a0,10 # 800a <times+0x7fea>
+  2c:	02658633          	mul	a2,a1,t1
+  30:	0000                	vmsge.vx	v0,v0,zero,v0.t
+	...

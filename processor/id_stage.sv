@@ -74,7 +74,7 @@ module inst_decoder (
           `ANDI_INST: alu_func = `ALU_AND;
           `SLLI_INST: alu_func = `ALU_SLL;
           `SRLI_INST, `SRAI_INST: begin
-            //This checks if any of the bits are 1 
+            //This checks if any of the bits are 1
             //to distinguish between the 2 instructions
             //because one has imm[5:11] = inst[25:30] = 0x00 and the other 0x20
             //If the ISA changes this check might need to be modified
@@ -160,7 +160,7 @@ endmodule  // inst_decoder
 
 
 
-//Instruction Decode Stage 
+//Instruction Decode Stage
 module id_stage (
     input logic        clk,                  // system clk
     input logic        rst,                  // system rst
@@ -168,28 +168,29 @@ module id_stage (
     input logic [31:0] if_id_PC,
     input logic        mem_wb_valid_inst,    //Does the instruction write to rd?
     input logic        mem_wb_reg_wr,        //Does the instruction write to rd?
-    input logic [ 4:0] mem_wb_dest_reg_idx,  //index of rd
     input logic [31:0] wb_reg_wr_data_out,   // Reg write data from WB Stage
     input logic        if_id_valid_inst,
+    input logic [ 4:0] mem_wb_dest_reg_idx,  //index of rd
+    input logic [ 4:0] ex_mem_dest_reg_idx,  //index of rd
+    input logic [ 4:0] id_ex_dest_reg_idx,   //index of rd
 
-    output logic [31:0] id_ra_value_out,   // reg A value
-    output logic [31:0] id_rb_value_out,   // reg B value
+    output logic [31:0] id_ra_value_out,  // reg A value
+    output logic [31:0] id_rb_value_out,  // reg B value
     output logic [31:0] id_immediate_out,  // sign-extended 32-bit immediate
     output logic [31:0] pc_add_opa,
-
     output logic [1:0] id_opa_select_out,  // ALU opa mux select (ALU_OPA_xxx *)
     output logic [1:0] id_opb_select_out,  // ALU opb mux select (ALU_OPB_xxx *)
-
     output logic id_reg_wr_out,
     output logic [2:0] id_funct3_out,
-    output logic [4:0] 	id_dest_reg_idx_out,  	// destination (writeback) register index (ZERO_REG if no writeback)
+    output logic [4:0] id_dest_reg_idx_out,  // destination (writeback) register index (ZERO_REG if no writeback)
     output logic [4:0] id_alu_func_out,  // ALU function select (ALU_xxx *)
     output logic id_rd_mem_out,  // does inst read memory?
     output logic id_wr_mem_out,  // does inst write memory?
     output logic cond_branch,
     output logic uncond_branch,
     output logic id_illegal_out,
-    output logic       	id_valid_inst_out	  	// is inst a valid instruction to be counted for CPI calculations?
+    output logic id_valid_inst_out, // is inst a valid instruction to be counted for CPI calculations?
+    output logic hazard_detected
 );
 
   logic dest_reg_select;
@@ -204,6 +205,8 @@ module id_stage (
   assign rb_idx = if_id_IR[24:20];  // inst operand B register index
   assign rc_idx = if_id_IR[11:7];  // inst operand C register index
   // Instantiate the register file used by this pipeline
+
+  assign hazard_detected = (ra_idx != 0 && (ra_idx == id_ex_dest_reg_idx || ra_idx == ex_mem_dest_reg_idx || ra_idx == mem_wb_dest_reg_idx)) || ( (rb_idx != 0) && (rb_idx == id_ex_dest_reg_idx || rb_idx == ex_mem_dest_reg_idx || rb_idx == mem_wb_dest_reg_idx));
 
   logic write_en;
   assign write_en = mem_wb_valid_inst & mem_wb_reg_wr;
@@ -260,8 +263,8 @@ module id_stage (
   //set up possible immediates:
   //jmp_disp: 20-bit sign-extended immediate for jump displacement;
   //up_imm: 20-bit immediate << 12;
-  //br_disp: sign-extended 12-bit immediate * 2 for branch displacement 
-  //mem_disp: sign-extended 12-bit immediate for memory displacement 
+  //br_disp: sign-extended 12-bit immediate * 2 for branch displacement
+  //mem_disp: sign-extended 12-bit immediate for memory displacement
   //alu_imm: sign-extended 12-bit immediate for ALU ops
   logic [31:0] jmp_disp;
   logic [31:0] up_imm;

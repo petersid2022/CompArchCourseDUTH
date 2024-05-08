@@ -20,7 +20,7 @@ module processor (
     output logic [ 1:0] proc2Dmem_command,
     output logic [31:0] proc2mem_data,
 
-    // Outputs from IF-Stage 
+    // Outputs from IF-Stage
     output logic [31:0] if_PC_out,
     output logic [31:0] if_NPC_out,
     output logic [31:0] if_IR_out,
@@ -38,12 +38,10 @@ module processor (
     output logic [31:0] id_ex_IR,
     output logic        id_ex_valid_inst,
 
-
     // Outputs from EX/MEM Pipeline Register
     output logic [31:0] ex_mem_NPC,
     output logic [31:0] ex_mem_IR,
     output logic        ex_mem_valid_inst,
-
 
     // Outputs from MEM/WB Pipeline Register
     output logic [31:0] mem_wb_NPC,
@@ -53,7 +51,6 @@ module processor (
 
   // Pipeline register enables
   logic if_id_enable, id_ex_enable, ex_mem_enable, mem_wb_enable;
-
 
   // Outputs from ID stage
   logic        id_reg_wr_out;
@@ -72,6 +69,7 @@ module processor (
   logic        id_uncond_branch;
   logic        id_cond_branch;
   logic [31:0] id_pc_add_opa;
+  logic        hazard_detected;
 
   // Outputs from ID/EX Pipeline Register
   logic        id_ex_reg_wr;
@@ -107,7 +105,6 @@ module processor (
   logic        ex_mem_take_branch;
   logic [31:0] ex_mem_target_PC;
 
-
   // Outputs from MEM-Stage
   logic [31:0] mem_result_out;
 
@@ -120,12 +117,8 @@ module processor (
   logic [31:0] mem_wb_mem_result;
   logic [31:0] mem_wb_alu_result;
 
-
   // Output from WB-Stage  (this loop back to the register file in ID and to the EX stage)
   logic [31:0] wb_reg_wr_data_out;
-
-  //Output Memory
-
 
   assign im_command = `BUS_LOAD;
 
@@ -133,7 +126,6 @@ module processor (
   assign pipeline_commit_wr_data = wb_reg_wr_data_out;
   assign pipeline_commit_NPC = if_NPC_out;
   assign pipeline_commit_wr = mem_wb_reg_wr;
-
 
   //////////////////////////////////////////////////
   //                                              //
@@ -148,7 +140,7 @@ module processor (
       .ex_take_branch_out(ex_mem_take_branch),
       .ex_target_PC_out  (ex_mem_target_PC),
       .Imem2proc_data    (instruction),
-
+      .hazard_detected   (hazard_detected),
 
       // Outputs
       .if_NPC_out   (if_NPC_out),
@@ -179,7 +171,6 @@ module processor (
     end
   end
 
-
   //////////////////////////////////////////////////
   //                                              //
   //                  ID-Stage                    //
@@ -191,11 +182,13 @@ module processor (
       .rst                (rst),
       .if_id_IR           (if_id_IR),
       .if_id_PC           (if_id_PC),
-      .mem_wb_dest_reg_idx(mem_wb_dest_reg_idx),
       .mem_wb_valid_inst  (mem_wb_valid_inst),
       .mem_wb_reg_wr      (mem_wb_reg_wr),
       .wb_reg_wr_data_out (wb_reg_wr_data_out),
       .if_id_valid_inst   (if_id_valid_inst),
+      .mem_wb_dest_reg_idx(mem_wb_dest_reg_idx),
+      .id_ex_dest_reg_idx (id_ex_dest_reg_idx),
+      .ex_mem_dest_reg_idx(ex_mem_dest_reg_idx),
 
       // Outputs
       .id_reg_wr_out      (id_reg_wr_out),
@@ -213,6 +206,7 @@ module processor (
       .cond_branch        (id_cond_branch),
       .uncond_branch      (id_uncond_branch),
       .id_illegal_out     (id_illegal_out),
+      .hazard_detected    (hazard_detected),
       .id_valid_inst_out  (id_valid_inst_out)
   );
 
@@ -348,7 +342,6 @@ module processor (
     end  // else: !if(rst)
   end  // always
 
-
   //////////////////////////////////////////////////
   //                                              //
   //                 MEM-Stage                    //
@@ -372,7 +365,6 @@ module processor (
       .proc2Dmem_addr(proc2Dmem_addr),
       .proc2Dmem_data(proc2mem_data)
   );
-
 
   //////////////////////////////////////////////////
   //                                              //

@@ -19,7 +19,7 @@ module mem_stage (
 );
 
   // Determine the command that must be sent to mem
-  assign proc2Dmem_command = 	(ex_mem_wr_mem & ex_mem_valid_inst) ? `BUS_STORE : (ex_mem_rd_mem & ex_mem_valid_inst) ? `BUS_LOAD : `BUS_NONE;
+  assign proc2Dmem_command = (ex_mem_wr_mem & ex_mem_valid_inst) ? `BUS_STORE : (ex_mem_rd_mem & ex_mem_valid_inst) ? `BUS_LOAD : `BUS_NONE;
 
   // The memory address is calculated by the ALU
   assign proc2Dmem_addr = ex_mem_alu_result;

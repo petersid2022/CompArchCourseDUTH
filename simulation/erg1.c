@@ -1,7 +1,6 @@
-extern int times(int a);
+extern int times();
 
-int main(int argc, char *argv[]) {
-  int out = times(5);
-
-  return out;
+int main(void) {
+  times();
+  return 0;
 }

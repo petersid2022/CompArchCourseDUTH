@@ -70,10 +70,8 @@ module ex_stage (
   assign ex_target_PC_out   = pc_add_opa + id_ex_imm;
 
   assign ex_take_branch_out = (uncond_branch | (cond_branch & brcond_result)) & id_ex_valid_inst;
-  //
 
   assign ex_alu_result_out  = alu_result;
-
 
 endmodule  // module ex_stage
 

@@ -3,7 +3,8 @@
   .global times
 
 times:
-  mv a0, a0
+  li x5, 8
   li x6, 2
-  addi a1, a0, 10
-  mul a2, a1, x6
+  li x7, 10
+  add a1, x5, x6
+  mul a2, a1, x7

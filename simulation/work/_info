@@ -11,24 +11,24 @@ cModel Technology
 Z0 d/home/petrside/github/arch_ergasthrio_2/CompArchCourseDUTH/simulation
 valu
 Z1 DXx6 sv_std 3 std 0 22 VYECXdT12H8WgbUP_5Y6:3
-Z2 !s110 1715155467
+Z2 !s110 1715257945
 !i10b 1
-!s100 bFl;oY9lk09FQ3<32R49g0
+!s100 9;Eb;zC]h7[GWl>[?;[:L3
 Z3 !s11b Dg1SIo80bB@j0V0VzS_@n1
-IhU96]_f12WGgnPdo1YO8P1
+IL]]S3QS5X]<a=_;lV;A412
 Z4 VDg1SIo80bB@j0V0VzS_@n1
 S1
 R0
-Z5 w1715155454
+Z5 w1715250175
 Z6 8../processor/ex_stage.sv
 Z7 F../processor/ex_stage.sv
 !i122 0
-L0 89 51
+L0 87 51
 Z8 OV;L;2020.1;71
 r1
 !s85 0
 31
-Z9 !s108 1715155467.000000
+Z9 !s108 1715257945.000000
 !s107 processor_tb.sv|memory.sv|../processor/processor.sv|../processor/wb_stage.sv|../processor/mem_stage.sv|../processor/ex_stage.sv|../processor/id_stage.sv|../processor/regfile.sv|../processor/if_stage.sv|../sys_defs.vh|
 Z10 !s90 -reportprogress|300|-f|files_rtl.f|
 !i113 1
@@ -37,9 +37,9 @@ vex_stage
 R1
 R2
 !i10b 1
-!s100 J7bI]=RCC[VTjYX0b@@3H3
+!s100 HmHjjhTl>7Vdek5`X0Hck2
 R3
-I8DQ_ThL>JUe2RIdZZC1@R3
+IKYeC8VVI93lX51IL[mW_;1
 R4
 S1
 R0
@@ -47,7 +47,7 @@ R5
 R6
 R7
 !i122 0
-L0 5 74
+L0 5 72
 R8
 r1
 !s85 0
@@ -57,21 +57,45 @@ Z12 !s107 processor_tb.sv|memory.sv|../processor/processor.sv|../processor/wb_st
 R10
 !i113 1
 R11
+vhazard_detection
+R1
+R2
+!i10b 1
+!s100 9URYP2257gQjPJ9]k81K61
+R3
+I7[S?VY>ZjAneUYnBY;>n<2
+R4
+S1
+R0
+Z13 w1715251885
+Z14 8../processor/id_stage.sv
+Z15 F../processor/id_stage.sv
+!i122 0
+L0 161 18
+R8
+r1
+!s85 0
+31
+R9
+R12
+R10
+!i113 1
+R11
 vid_stage
 R1
 R2
 !i10b 1
-!s100 V=ZW0a:0A=`=V<Efj<15M2
+!s100 PEX4HdU@nb?_dWeFgKigd3
 R3
-Ih]N:_bJ?hGRC:a>[^AfXA2
+ICfO7AEOYJnEo`izCKm]1B3
 R4
 S1
 R0
-Z13 w1715155196
-Z14 8../processor/id_stage.sv
-Z15 F../processor/id_stage.sv
+R13
+R14
+R15
 !i122 0
-L0 164 133
+L0 181 139
 R8
 r1
 !s85 0
@@ -85,17 +109,17 @@ vif_stage
 R1
 R2
 !i10b 1
-!s100 W:C6nGc0dkNRSTWR6LiFE3
+!s100 6YgHTmzSeA]B4H^b0g9Ab0
 R3
-IS3?[@cz02P^nfkGOR2lz53
+IlIdRID@9jLXn^U@kEk6XG1
 R4
 S1
 R0
-w1715155200
+w1715251754
 8../processor/if_stage.sv
 F../processor/if_stage.sv
 !i122 0
-L0 5 51
+L0 5 47
 R8
 r1
 !s85 0
@@ -139,7 +163,7 @@ I2I]31C;_7hgYzz4b<fXNa3
 R4
 S1
 R0
-Z16 w1713950543
+Z16 w1715249440
 8memory.sv
 Fmemory.sv
 !i122 0
@@ -163,7 +187,7 @@ IRG2mXZ8eCOIJEN;[ce7<[1
 R4
 S1
 R0
-w1715155204
+w1715251914
 8../processor/mem_stage.sv
 F../processor/mem_stage.sv
 !i122 0
@@ -181,17 +205,17 @@ vprocessor
 R1
 R2
 !i10b 1
-!s100 3A30Nf3kjDAf]<>M`D_3z3
+!s100 DM3Phi1dE]M^832zdz?Ta0
 R3
-IAm5Zd^QoZfAFTlNKjMQm`1
+IhT=kKHLc9PNKNh2DTTYE?2
 R4
 S1
 R0
-w1715155210
+w1715251960
 8../processor/processor.sv
 F../processor/processor.sv
 !i122 0
-L0 5 428
+L0 5 420
 R8
 r1
 !s85 0
@@ -211,7 +235,7 @@ I4@V_bnOYaUmHId3T[9Vcj0
 R4
 S1
 R0
-R16
+w1715249556
 8processor_tb.sv
 Fprocessor_tb.sv
 !i122 0
@@ -235,7 +259,7 @@ I6XaiJ9RblB`;=IR`PPTl:0
 R4
 S1
 R0
-w1715155216
+R16
 8../processor/regfile.sv
 F../processor/regfile.sv
 !i122 0
@@ -259,7 +283,7 @@ IC8n8KQGV30UlFh^mLYdo^3
 R4
 S1
 R0
-w1715155222
+R16
 8../processor/wb_stage.sv
 F../processor/wb_stage.sv
 !i122 0

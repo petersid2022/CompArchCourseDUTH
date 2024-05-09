@@ -69,7 +69,7 @@ module processor (
   logic        id_uncond_branch;
   logic        id_cond_branch;
   logic [31:0] id_pc_add_opa;
-  logic        hazard_detected;
+  logic        should_stall;
 
   // Outputs from ID/EX Pipeline Register
   logic        id_ex_reg_wr;
@@ -140,7 +140,7 @@ module processor (
       .ex_take_branch_out(ex_mem_take_branch),
       .ex_target_PC_out  (ex_mem_target_PC),
       .Imem2proc_data    (instruction),
-      .hazard_detected   (hazard_detected),
+      .should_stall      (should_stall),
 
       // Outputs
       .if_NPC_out   (if_NPC_out),
@@ -155,10 +155,10 @@ module processor (
   //            IF/ID Pipeline Register           //
   //                                              //
   //////////////////////////////////////////////////
-  assign if_id_enable = 1;
+  assign if_id_enable = ~should_stall;
 
   always_ff @(posedge clk or posedge rst) begin
-    if (rst) begin
+    if (rst || ex_take_branch_out || ex_mem_take_branch) begin
       if_id_PC         <= 0;
       if_id_IR         <= `NOOP_INST;
       if_id_NPC        <= 0;
@@ -206,7 +206,7 @@ module processor (
       .cond_branch        (id_cond_branch),
       .uncond_branch      (id_uncond_branch),
       .id_illegal_out     (id_illegal_out),
-      .hazard_detected    (hazard_detected),
+      .should_stall       (should_stall),
       .id_valid_inst_out  (id_valid_inst_out)
   );
 
@@ -218,7 +218,7 @@ module processor (
   assign id_ex_enable = 1;  // disabled when HzDU initiates a stall
   // synopsys sync_set_rst "rst"
   always_ff @(posedge clk or posedge rst) begin
-    if (rst) begin  //sys_rst
+    if (rst || ex_take_branch_out || should_stall) begin  //sys_rst
       //Control
       id_ex_funct3        <= 0;
       id_ex_opa_select    <= `ALU_OPA_IS_REGA;

@@ -158,7 +158,24 @@ module inst_decoder (
   end
 endmodule  // inst_decoder
 
+module hazard_detection (
+    input logic [4:0] ra_idx,
+    input logic [4:0] rb_idx,
+    input logic [4:0] id_ex_dest_reg_idx,
+    input logic [4:0] ex_mem_dest_reg_idx,
+    input logic [4:0] mem_wb_dest_reg_idx,
+    output logic should_stall
+);
 
+  logic hazard_A;
+  logic hazard_B;
+
+  assign hazard_A = ra_idx != 0 && (ra_idx == id_ex_dest_reg_idx || ra_idx == ex_mem_dest_reg_idx || ra_idx == mem_wb_dest_reg_idx);
+  assign hazard_B = rb_idx != 0 && (rb_idx == id_ex_dest_reg_idx || rb_idx == ex_mem_dest_reg_idx || rb_idx == mem_wb_dest_reg_idx);
+
+  assign should_stall = (hazard_A || hazard_B) ? 1 : 0;
+
+endmodule
 
 //Instruction Decode Stage
 module id_stage (
@@ -190,7 +207,7 @@ module id_stage (
     output logic uncond_branch,
     output logic id_illegal_out,
     output logic id_valid_inst_out, // is inst a valid instruction to be counted for CPI calculations?
-    output logic hazard_detected
+    output logic should_stall
 );
 
   logic dest_reg_select;
@@ -204,9 +221,15 @@ module id_stage (
   assign ra_idx = if_id_IR[19:15];  // inst operand A register index
   assign rb_idx = if_id_IR[24:20];  // inst operand B register index
   assign rc_idx = if_id_IR[11:7];  // inst operand C register index
-  // Instantiate the register file used by this pipeline
 
-  assign hazard_detected = (ra_idx != 0 && (ra_idx == id_ex_dest_reg_idx || ra_idx == ex_mem_dest_reg_idx || ra_idx == mem_wb_dest_reg_idx)) || ( (rb_idx != 0) && (rb_idx == id_ex_dest_reg_idx || rb_idx == ex_mem_dest_reg_idx || rb_idx == mem_wb_dest_reg_idx));
+  hazard_detection detector_0 (
+      .ra_idx             (ra_idx),
+      .rb_idx             (rb_idx),
+      .id_ex_dest_reg_idx (id_ex_dest_reg_idx),
+      .ex_mem_dest_reg_idx(ex_mem_dest_reg_idx),
+      .mem_wb_dest_reg_idx(mem_wb_dest_reg_idx),
+      .should_stall       (should_stall)
+  );
 
   logic write_en;
   assign write_en = mem_wb_valid_inst & mem_wb_reg_wr;
@@ -259,7 +282,6 @@ module id_stage (
 
   //ultimate "take branch" signal: unconditional, or conditional and the condition is true
 
-
   //set up possible immediates:
   //jmp_disp: 20-bit sign-extended immediate for jump displacement;
   //up_imm: 20-bit immediate << 12;
@@ -278,7 +300,6 @@ module id_stage (
   assign mem_disp = {{20{if_id_IR[31]}}, if_id_IR[31:25], if_id_IR[11:7]};
   assign alu_imm  = {{20{if_id_IR[31]}}, if_id_IR[31:20]};
 
-
   always_comb begin : immediate_mux
     case (if_id_IR[6:0])
       `S_TYPE: id_immediate_out = mem_disp;
@@ -290,7 +311,6 @@ module id_stage (
   end
 
   assign pc_add_opa = (if_id_IR[6:0] == `I_JAL_TYPE) ? id_ra_value_out : if_id_PC;
-
 
   //target PC to branch to
 

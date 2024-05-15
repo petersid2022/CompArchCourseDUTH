@@ -158,7 +158,9 @@ module processor (
   assign if_id_enable = ~should_stall;
 
   always_ff @(posedge clk or posedge rst) begin
+    // if rst or branch should be taken at the execution stage or at memory stage
     if (rst || ex_take_branch_out || ex_mem_take_branch) begin
+      // flush the pipeline registers
       if_id_PC         <= 0;
       if_id_IR         <= `NOOP_INST;
       if_id_NPC        <= 0;
@@ -218,7 +220,12 @@ module processor (
   assign id_ex_enable = 1;  // disabled when HzDU initiates a stall
   // synopsys sync_set_rst "rst"
   always_ff @(posedge clk or posedge rst) begin
+    // if rst or a branch is taken at the ex stage
+    // or a stall condition is met
     if (rst || ex_take_branch_out || should_stall) begin  //sys_rst
+      //
+      // The pipeline registers are reset
+      //
       //Control
       id_ex_funct3        <= 0;
       id_ex_opa_select    <= `ALU_OPA_IS_REGA;
@@ -375,7 +382,7 @@ module processor (
   // synopsys sync_set_rst "rst"
   always_ff @(posedge clk or posedge rst) begin
     if (rst) begin
-      //Control 
+      //Control
       mem_wb_funct3       <= 0;
       mem_wb_illegal      <= 0;
       mem_wb_valid_inst   <= `FALSE;
@@ -417,7 +424,6 @@ module processor (
       .mem_wb_alu_result(mem_wb_alu_result),
       .mem_wb_rd_mem(mem_wb_rd_mem),
       .mem_wb_valid_inst(mem_wb_valid_inst),
-
       .wb_reg_wr_data_out(wb_reg_wr_data_out)
   );
 

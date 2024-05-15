@@ -167,12 +167,17 @@ module hazard_detection (
     output logic should_stall
 );
 
+  // hazard involving register A
   logic hazard_A;
+
+  // hazard involving register B
   logic hazard_B;
 
   assign hazard_A = ra_idx != 0 && (ra_idx == id_ex_dest_reg_idx || ra_idx == ex_mem_dest_reg_idx || ra_idx == mem_wb_dest_reg_idx);
   assign hazard_B = rb_idx != 0 && (rb_idx == id_ex_dest_reg_idx || rb_idx == ex_mem_dest_reg_idx || rb_idx == mem_wb_dest_reg_idx);
 
+  // Is either hazard_A or hazard_B true?
+  // Then there is a data hazard.
   assign should_stall = (hazard_A || hazard_B) ? 1 : 0;
 
 endmodule

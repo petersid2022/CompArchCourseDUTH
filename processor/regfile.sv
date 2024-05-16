@@ -6,13 +6,13 @@ module regfile (
     input logic        clk,
     input logic        rst,
     input logic [ 4:0] rda_idx,
-    rdb_idx,
-    wr_idx,  // read/write index
+    input logic [ 4:0] rdb_idx,
+    input logic [ 4:0] wr_idx,   // read/write index
     input logic [31:0] wr_data,  // write data
     input logic        wr_en,
 
     output logic [31:0] rda_out,
-    rdb_out  // read data
+    output logic [31:0] rdb_out   // read data
 );
 
   logic [31:0] registers[0:31];

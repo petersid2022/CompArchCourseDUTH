@@ -191,6 +191,10 @@ module processor (
       .mem_wb_dest_reg_idx(mem_wb_dest_reg_idx),
       .id_ex_dest_reg_idx (id_ex_dest_reg_idx),
       .ex_mem_dest_reg_idx(ex_mem_dest_reg_idx),
+      .ex_alu_result_out  (ex_alu_result_out),
+      .ex_mem_alu_result  (ex_mem_alu_result),
+      .id_ex_rd_mem       (id_ex_rd_mem),
+      .ex_mem_rd_mem      (ex_mem_rd_mem),
 
       // Outputs
       .id_reg_wr_out      (id_reg_wr_out),
@@ -223,9 +227,7 @@ module processor (
     // if rst or a branch is taken at the ex stage
     // or a stall condition is met
     if (rst || ex_take_branch_out || should_stall) begin  //sys_rst
-      //
       // The pipeline registers are reset
-      //
       //Control
       id_ex_funct3        <= 0;
       id_ex_opa_select    <= `ALU_OPA_IS_REGA;

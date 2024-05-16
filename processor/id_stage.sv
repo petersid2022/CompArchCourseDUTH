@@ -164,21 +164,106 @@ module hazard_detection (
     input logic [4:0] id_ex_dest_reg_idx,
     input logic [4:0] ex_mem_dest_reg_idx,
     input logic [4:0] mem_wb_dest_reg_idx,
+
+    // does the instruction in the ID/EX pipeline
+    // register perform a memory read operation?
+    input logic id_ex_rd_mem,
+
+    // does the instruction in the EX/MEM pipeline
+    // register perform a memory read operation?
+    input logic ex_mem_rd_mem,
+
+    // completely bypass register file
+    output logic should_forward_id_ex_A,
+    output logic should_forward_id_ex_B,
+
+    // before our execute stage
+    output logic should_forward_ex_mem_A,
+    output logic should_forward_ex_mem_B,
+
+    // after our execute stage
+    output logic should_forward_mem_wb_A,
+    output logic should_forward_mem_wb_B,
+
     output logic should_stall
 );
 
-  // hazard involving register A
+  // hazards involving registers A and B
   logic hazard_A;
-
-  // hazard involving register B
   logic hazard_B;
 
-  assign hazard_A = ra_idx != 0 && (ra_idx == id_ex_dest_reg_idx || ra_idx == ex_mem_dest_reg_idx || ra_idx == mem_wb_dest_reg_idx);
-  assign hazard_B = rb_idx != 0 && (rb_idx == id_ex_dest_reg_idx || rb_idx == ex_mem_dest_reg_idx || rb_idx == mem_wb_dest_reg_idx);
+  assign hazard_A = (ra_idx != 5'b0) && ((ra_idx == id_ex_dest_reg_idx) || (ra_idx == ex_mem_dest_reg_idx) || (ra_idx == mem_wb_dest_reg_idx)) ? 1 : 0;
+  assign hazard_B = (rb_idx != 5'b0) && ((rb_idx == id_ex_dest_reg_idx) || (rb_idx == ex_mem_dest_reg_idx) || (rb_idx == mem_wb_dest_reg_idx)) ? 1 : 0;
 
-  // Is either hazard_A or hazard_B true?
-  // Then there is a data hazard.
-  assign should_stall = (hazard_A || hazard_B) ? 1 : 0;
+  forwarding_unit forwarding_detector_0 (
+      .ra_idx                 (ra_idx),
+      .rb_idx                 (rb_idx),
+      .id_ex_dest_reg_idx     (id_ex_dest_reg_idx),
+      .ex_mem_dest_reg_idx    (ex_mem_dest_reg_idx),
+      .mem_wb_dest_reg_idx    (mem_wb_dest_reg_idx),
+      .id_ex_rd_mem           (id_ex_rd_mem),
+      .ex_mem_rd_mem          (ex_mem_rd_mem),
+      .should_forward_id_ex_A (should_forward_id_ex_A),
+      .should_forward_ex_mem_A(should_forward_ex_mem_A),
+      .should_forward_mem_wb_A(should_forward_mem_wb_A),
+      .should_forward_id_ex_B (should_forward_id_ex_B),
+      .should_forward_ex_mem_B(should_forward_ex_mem_B),
+      .should_forward_mem_wb_B(should_forward_mem_wb_B)
+  );
+
+  logic forwarding_not_occured_A;
+  logic forwarding_not_occured_B;
+
+  // WE SHOULD STALL ONLY IF WE HAVEN'T FORWARDED!!
+  assign forwarding_not_occured_A = (hazard_A && ~(should_forward_id_ex_A || should_forward_ex_mem_A || should_forward_mem_wb_A));
+  assign forwarding_not_occured_B = (hazard_B && ~(should_forward_id_ex_B || should_forward_mem_wb_B || should_forward_mem_wb_B));
+
+  assign should_stall = (forwarding_not_occured_A || forwarding_not_occured_B) ? 1 : 0;
+endmodule
+
+// Three types of forwarding/bypass
+// * Forwarding from Ex/Mem registers to Ex stage
+// * Forwarding from Mem/WB register to Ex stage
+// * RegisterFile Bypass (ID/EX pipeline register)
+module forwarding_unit (
+    input logic [4:0] ra_idx,
+    input logic [4:0] rb_idx,
+    input logic [4:0] id_ex_dest_reg_idx,
+    input logic [4:0] ex_mem_dest_reg_idx,
+    input logic [4:0] mem_wb_dest_reg_idx,
+
+    // does the instruction in the ID/EX pipeline
+    // register perform a memory read operation?
+    input logic id_ex_rd_mem,
+
+    // does the instruction in the EX/MEM pipeline
+    // register perform a memory read operation?
+    input logic ex_mem_rd_mem,
+
+    // Outputs
+    // enables for signalling wether or not we
+    // should forward a register from a different pipeline
+    // to the execute stage
+    output logic should_forward_id_ex_A,
+    output logic should_forward_ex_mem_A,
+    output logic should_forward_mem_wb_A,
+    output logic should_forward_id_ex_B,
+    output logic should_forward_ex_mem_B,
+    output logic should_forward_mem_wb_B
+);
+
+  // ID/EX
+  // for bypassing the register file
+  assign should_forward_id_ex_A = (id_ex_dest_reg_idx != 0 && ra_idx == id_ex_dest_reg_idx && (~id_ex_rd_mem));
+  assign should_forward_id_ex_B = (id_ex_dest_reg_idx != 0 && rb_idx == id_ex_dest_reg_idx && (~id_ex_rd_mem));
+
+  // EX/MEM
+  assign should_forward_ex_mem_A = (ex_mem_dest_reg_idx != 0 && ra_idx == ex_mem_dest_reg_idx && (~should_forward_id_ex_A) && (~ex_mem_rd_mem));
+  assign should_forward_ex_mem_B = (ex_mem_dest_reg_idx != 0 && rb_idx == ex_mem_dest_reg_idx && (~should_forward_id_ex_B) && (~ex_mem_rd_mem));
+
+  // MEM/WB
+  assign should_forward_mem_wb_A = (mem_wb_dest_reg_idx != 0 && ra_idx == mem_wb_dest_reg_idx && (~should_forward_ex_mem_A) && (~should_forward_id_ex_A));
+  assign should_forward_mem_wb_B = (mem_wb_dest_reg_idx != 0 && rb_idx == mem_wb_dest_reg_idx && (~should_forward_ex_mem_B) && (~should_forward_id_ex_B));
 
 endmodule
 
@@ -195,6 +280,10 @@ module id_stage (
     input logic [ 4:0] mem_wb_dest_reg_idx,  //index of rd
     input logic [ 4:0] ex_mem_dest_reg_idx,  //index of rd
     input logic [ 4:0] id_ex_dest_reg_idx,   //index of rd
+    input logic [31:0] ex_alu_result_out,
+    input logic [31:0] ex_mem_alu_result,
+    input logic        id_ex_rd_mem,
+    input logic        ex_mem_rd_mem,
 
     output logic [31:0] id_ra_value_out,  // reg A value
     output logic [31:0] id_rb_value_out,  // reg B value
@@ -215,8 +304,8 @@ module id_stage (
     output logic should_stall
 );
 
-  logic dest_reg_select;
   logic [31:0] rb_val;
+  logic dest_reg_select;
 
   //instruction fields read from IF/ID pipeline register
   logic [4:0] ra_idx;
@@ -227,34 +316,62 @@ module id_stage (
   assign rb_idx = if_id_IR[24:20];  // inst operand B register index
   assign rc_idx = if_id_IR[11:7];  // inst operand C register index
 
-  hazard_detection detector_0 (
-      .ra_idx             (ra_idx),
-      .rb_idx             (rb_idx),
-      .id_ex_dest_reg_idx (id_ex_dest_reg_idx),
-      .ex_mem_dest_reg_idx(ex_mem_dest_reg_idx),
-      .mem_wb_dest_reg_idx(mem_wb_dest_reg_idx),
-      .should_stall       (should_stall)
+  logic should_forward_id_ex_A;
+  logic should_forward_id_ex_B;
+  logic should_forward_ex_mem_A;
+  logic should_forward_ex_mem_B;
+  logic should_forward_mem_wb_A;
+  logic should_forward_mem_wb_B;
+
+  hazard_detection hazard_detector_0 (
+      .ra_idx                 (ra_idx),
+      .rb_idx                 (rb_idx),
+      .id_ex_dest_reg_idx     (id_ex_dest_reg_idx),
+      .ex_mem_dest_reg_idx    (ex_mem_dest_reg_idx),
+      .mem_wb_dest_reg_idx    (mem_wb_dest_reg_idx),
+      .id_ex_rd_mem           (id_ex_rd_mem),
+      .ex_mem_rd_mem          (ex_mem_rd_mem),
+      .should_forward_id_ex_A (should_forward_id_ex_A),
+      .should_forward_ex_mem_A(should_forward_ex_mem_A),
+      .should_forward_mem_wb_A(should_forward_mem_wb_A),
+      .should_forward_id_ex_B (should_forward_id_ex_B),
+      .should_forward_ex_mem_B(should_forward_ex_mem_B),
+      .should_forward_mem_wb_B(should_forward_mem_wb_B),
+      .should_stall           (should_stall)
   );
+
+  logic [31:0] rf_ra_value_out;
+  logic [31:0] rf_rb_value_out;
+
+  always_comb begin
+    if (should_forward_id_ex_A) id_ra_value_out = ex_alu_result_out;
+    else if (should_forward_ex_mem_A) id_ra_value_out = ex_mem_alu_result;
+    else if (should_forward_mem_wb_A) id_ra_value_out = wb_reg_wr_data_out;
+    else id_ra_value_out = rf_ra_value_out;
+
+    if (should_forward_id_ex_B) id_rb_value_out = ex_alu_result_out;
+    else if (should_forward_ex_mem_B) id_rb_value_out = ex_mem_alu_result;
+    else if (should_forward_mem_wb_B) id_rb_value_out = wb_reg_wr_data_out;
+    else id_rb_value_out = rf_rb_value_out;
+  end
 
   logic write_en;
   assign write_en = mem_wb_valid_inst & mem_wb_reg_wr;
 
-  regfile regf_0 (
-      .clk(clk),
-      .rst(rst),
+  regfile register_file (
+      .clk    (clk),
+      .rst    (rst),
       .rda_idx(ra_idx),
-      .rda_out(id_ra_value_out),
       .rdb_idx(rb_idx),
-      .rdb_out(rb_val),
-      .wr_en(write_en),
-      .wr_idx(mem_wb_dest_reg_idx),
+      .rda_out(rf_ra_value_out),
+      .rdb_out(rf_rb_value_out),
+      .wr_en  (write_en),
+      .wr_idx (mem_wb_dest_reg_idx),
       .wr_data(wb_reg_wr_data_out)
   );
 
-  assign id_rb_value_out = rb_val;
-
   // instantiate the instruction inst_decoder
-  inst_decoder inst_decoder_0 (
+  inst_decoder instruction_decoder_0 (
       .inst         (if_id_IR),
       .valid_inst_in(if_id_valid_inst),
       .opa_select   (id_opa_select_out),
@@ -318,7 +435,6 @@ module id_stage (
   assign pc_add_opa = (if_id_IR[6:0] == `I_JAL_TYPE) ? id_ra_value_out : if_id_PC;
 
   //target PC to branch to
-
   assign id_funct3_out = if_id_IR[14:12];
 
 endmodule  // module id_stage

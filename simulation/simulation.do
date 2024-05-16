@@ -17,7 +17,13 @@ add wave -position end  sim:/processor_tb/id_ex_IR
 add wave -position end  sim:/processor_tb/ex_mem_IR
 add wave -position end  sim:/processor_tb/mem_wb_IR
 add wave -position end  sim:/processor_tb/proc_module/id_stage_0/should_stall
-add wave -position end  sim:/processor_tb/proc_module/detector_0/hazard_A
-add wave -position end  sim:/processor_tb/proc_module/detector_0/hazard_B
+add wave -position end  sim:/processor_tb/proc_module/id_stage_0/should_forward_id_ex_A
+add wave -position end  sim:/processor_tb/proc_module/id_stage_0/should_forward_id_ex_B
+add wave -position end  sim:/processor_tb/proc_module/id_stage_0/should_forward_ex_mem_A
+add wave -position end  sim:/processor_tb/proc_module/id_stage_0/should_forward_ex_mem_B
+add wave -position end  sim:/processor_tb/proc_module/id_stage_0/should_forward_mem_wb_A
+add wave -position end  sim:/processor_tb/proc_module/id_stage_0/should_forward_mem_wb_B
+add wave -position end  sim:/processor_tb/proc_module/id_stage_0/id_ex_rd_mem
+add wave -position end  sim:/processor_tb/proc_module/id_stage_0/ex_mem_rd_mem
 
 radix -hexadecimal
